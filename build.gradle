@@ -4,6 +4,7 @@ plugins {
     id 'org.jetbrains.kotlin.jvm' version '1.8.21'
     // OPTIONAL Kotlin Serialization plugin
     id 'org.jetbrains.kotlin.plugin.serialization' version '1.8.21'
+    id 'org.parchmentmc.librarian.forgegradle' version '1.+'
 }
 
 version = "${mod_version}"
@@ -15,7 +16,7 @@ java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 println ("Java: ${System.getProperty('java.version')}, JVM: ${System.getProperty('java.vm.version')} (${System.getProperty('java.vendor')}), Arch: ${System.getProperty('os.arch')}")
 minecraft {
     // Change to your preferred mappings
-    mappings channel: 'official', version: '1.19.2'
+    mappings channel: "parchment", version: "${rootProject.mappings_version}-${rootProject.minecraft_version}"
     // Add your AccessTransformer
     // accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
 
@@ -90,6 +91,7 @@ dependencies {
     implementation fg.deobf("curse.maven:ic2_classic-242942:5137503")
     implementation fg.deobf("curse.maven:jei-238222:4712866")
     implementation(fg.deobf("maven.modrinth:carbon-config:l6LTuPIs"))
+    implementation fg.deobf("curse.maven:the-one-probe-245211:3965693")
 }
 
 processResources {

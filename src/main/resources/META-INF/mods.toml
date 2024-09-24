@@ -6,23 +6,23 @@ loaderVersion="[3,)" # Require at least 3.x
 license='LGPL'
 
 [[mods]]
-modId="examplemod"
-version="${file.jarVersion}"
-displayName="ExampleMod"
+modId="ic2c_json_crops"
+version="${version}"
+displayName="IC2C Json Crops"
 credits="The ExampleMod dev team"
-authors="ExampleModAuthor"
+authors="Trinsdar"
 description='''
-Example mod that uses Kotlin for Forge.
+Utility mod for maing ic2c crops using json.
 '''
-[[dependencies.examplemod]]
+[[dependencies.ic2c_json_crops]]
     modId="forge"
     mandatory=true
-    versionRange="[41,)"
+    versionRange="[43,)"
     ordering="NONE"
     side="BOTH"
-[[dependencies.examplemod]]
+[[dependencies.ic2c_json_crops]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.19,1.20)"
+    versionRange="[1.19.2,1.19.3)"
     ordering="NONE"
     side="BOTH"

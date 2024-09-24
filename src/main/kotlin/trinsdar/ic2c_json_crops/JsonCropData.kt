@@ -95,15 +95,14 @@ data class JsonCropData(val id: ResourceLocation, val name: String,
                 val growthDuration = if (jsonObject.has("growthDuration")) {
                     val list = ArrayList<Int>()
                     array = jsonObject.getAsJsonArray("growthDuration")
+                    if (array.isEmpty) list.add(properties.tier * 200)
                     for (element in array){
                         list.add(element.asInt)
                     }
                     list
                 } else {
                     val list = ArrayList<Int>()
-                    for (i in 0 until growthSteps){
-                        list.add(properties.tier * 200)
-                    }
+                    list.add(properties.tier * 200)
                     list
                 }
                 val droppingSeeds = jsonObject.has("droppingSeeds") || jsonObject.getAsJsonObject("droppingSeeds").asBoolean

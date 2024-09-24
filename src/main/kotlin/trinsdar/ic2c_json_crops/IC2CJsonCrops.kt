@@ -1,7 +1,11 @@
 package trinsdar.ic2c_json_crops
 
 import com.google.gson.JsonParser
+import ic2.api.crops.ICrop
+import ic2.api.crops.ICropRegistry
+import ic2.core.block.crops.CropRegistry
 import net.minecraft.client.Minecraft
+import net.minecraft.resources.ResourceLocation
 import net.minecraftforge.eventbus.api.EventPriority
 import net.minecraftforge.eventbus.api.SubscribeEvent
 import net.minecraftforge.fml.common.Mod
@@ -12,6 +16,7 @@ import net.minecraftforge.fml.loading.FMLPaths
 import org.apache.logging.log4j.Level
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
+import thedarkcolour.kotlinforforge.forge.FORGE_BUS
 import thedarkcolour.kotlinforforge.forge.MOD_BUS
 import java.io.File
 import java.nio.file.Files
@@ -26,14 +31,14 @@ object IC2CJsonCrops {
     val LOGGER: Logger = LogManager.getLogger(ID)
 
     init {
-        MOD_BUS.register(this)
+        FORGE_BUS.register(this)
+        FORGE_BUS.start()
     }
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
-    fun onCommonSetup(event: FMLCommonSetupEvent){
+    fun onCropRegister(event: ICropRegistry.CropRegisterEvent){
         val cropJsons = File(FMLPaths.CONFIGDIR.get().toFile(), "ic2c/crops")
-        val files = cropJsons.listFiles()
-        if (files == null) return
+        val files = cropJsons.listFiles() ?: return
         if (cropJsons.isDirectory) {
             for (cropJson in files) {
                 if (cropJson.isFile){
@@ -41,6 +46,19 @@ object IC2CJsonCrops {
                         try {
                             val reader = Files.newBufferedReader(cropJson.toPath())
                             val parsed = JsonParser.parseReader(reader).asJsonObject
+                            val cropData = JsonCropData.fromJsonObject(parsed)
+                            if (cropData != null){
+                                val id = cropData.id
+                                var crop = CropRegistry.REGISTRY.getCrop(id)
+                                if (crop != null){
+                                    LOGGER.error("---------------------------------")
+                                    LOGGER.error("Crop ${crop.id()} already exists, not adding ${cropJson.name}")
+                                    LOGGER.error("---------------------------------")
+                                    continue
+                                }
+                                crop = JsonCrop(cropData)
+                                CropRegistry.REGISTRY.registerCrop(crop)
+                            }
                         } catch (e: Exception){
                             e.printStackTrace()
                         }

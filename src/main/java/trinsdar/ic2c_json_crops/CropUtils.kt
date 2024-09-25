@@ -13,9 +13,11 @@ import net.minecraftforge.common.crafting.CraftingHelper
 import net.minecraftforge.fml.loading.FMLPaths
 import trinsdar.ic2c_json_crops.IC2CJsonCrops.LOGGER
 import java.io.File
+import java.io.FileOutputStream
+import java.io.IOException
+import java.io.InputStream
 import java.nio.file.Files
 import java.util.function.Consumer
-import java.util.function.Function
 
 fun cropFromJsonObject(jsonObject: JsonObject) : JsonCropData {
 
@@ -157,5 +159,25 @@ fun readFromFile(path: String, function: Consumer<JsonObject>) {
                 }
             }
         }
+    }
+}
+
+internal fun writeExampleConfig(subDir: String, readName: String) {
+    val dir = File(FMLPaths.CONFIGDIR.get().toFile(), "ic2c/$subDir")
+    val target = File(dir, readName)
+    try {
+        dir.mkdirs()
+        val `in`: InputStream =
+            IC2CJsonCrops::class.java.getResourceAsStream("/$readName")!!
+        val out = FileOutputStream(target)
+
+        val buf = ByteArray(16384)
+        var len: Int
+        while ((`in`.read(buf).also { len = it }) > 0) out.write(buf, 0, len)
+
+        `in`.close()
+        out.close()
+    } catch (e: IOException) {
+        e.printStackTrace()
     }
 }

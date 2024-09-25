@@ -15,6 +15,7 @@ import net.minecraftforge.fml.common.Mod
 import net.minecraftforge.registries.ForgeRegistries
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
+import thedarkcolour.kotlinforforge.forge.DIST
 import thedarkcolour.kotlinforforge.forge.FORGE_BUS
 
 @Mod(IC2CJsonCrops.ID)
@@ -31,6 +32,12 @@ object IC2CJsonCrops {
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     fun onCropRegister(event: ICropRegistry.CropRegisterEvent){
+        if (DIST.isClient){
+            writeExampleConfig("crops", "example-crop.json5")
+            writeExampleConfig("farmland", "example-farmland.json5")
+            writeExampleConfig("seeds", "example-seed.json5")
+            writeExampleConfig("subsoils", "example-subsoil.json5")
+        }
         readFromFile("crops"){ j ->
             val cropData = cropFromJsonObject(j)
             val id = cropData.id

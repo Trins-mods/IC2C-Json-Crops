@@ -1,3 +1,4 @@
+@file:JvmName("CropUtils")
 package trinsdar.ic2c_json_crops
 
 import com.google.gson.JsonObject
@@ -15,8 +16,6 @@ import java.io.File
 import java.nio.file.Files
 import java.util.function.Consumer
 import java.util.function.Function
-
-@JvmName("CropUtils")
 
 fun cropFromJsonObject(jsonObject: JsonObject) : JsonCropData {
 

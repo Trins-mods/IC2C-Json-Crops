@@ -1,6 +1,7 @@
 package trinsdar.ic2c_json_crops
 
 import com.google.gson.JsonObject
+import com.google.gson.JsonParser
 import ic2.api.crops.BaseSeed
 import ic2.api.crops.CropProperties
 import ic2.api.crops.ICrop
@@ -8,6 +9,12 @@ import ic2.core.block.crops.CropRegistry
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.item.ItemStack
 import net.minecraftforge.common.crafting.CraftingHelper
+import net.minecraftforge.fml.loading.FMLPaths
+import trinsdar.ic2c_json_crops.IC2CJsonCrops.LOGGER
+import java.io.File
+import java.nio.file.Files
+import java.util.function.Consumer
+import java.util.function.Function
 
 @JvmName("CropUtils")
 
@@ -112,3 +119,44 @@ fun cropFromJsonObject(jsonObject: JsonObject) : JsonCropData {
     return JsonCropData(id, name, discoveredBy, displayItem, properties, attributes, textures, growthSteps, drops, cropType, optionalHarvestStep, growthDuration, droppingSeeds, seedDrops)
 }
 
+fun seedFromJsonObject(jsonObject: JsonObject): BaseSeed {
+    if (!jsonObject.has("crop")) throw IllegalArgumentException("seed json missing crop element")
+    val cropString = jsonObject.get("crop").asString
+    val crop: ICrop
+    if ((CropRegistry.REGISTRY.getCrop(ResourceLocation(cropString)).also { crop = it }) == null)
+        throw IllegalArgumentException("crop $cropString does not exist")
+    val stage = if (jsonObject.has("stage")) jsonObject.get("stage").asInt else 1
+    if (stage > crop.growthSteps) throw IllegalArgumentException("seed defines a growth stage greater then the max")
+    val growth = if (jsonObject.has("growth")) jsonObject.get("growth").asInt else 1
+    val gain = if (jsonObject.has("gain")) jsonObject.get("gain").asInt else 1
+    val resistance = if (jsonObject.has("resistance")) jsonObject.get("resistance").asInt else 1
+    val stackSize = if (jsonObject.has("stackSize")) jsonObject.get("stackSize").asInt else 1
+    return BaseSeed(crop, stage, growth, gain, resistance, stackSize)
+}
+
+fun readFromFile(path: String, function: Consumer<JsonObject>) {
+    val cropJsons = File(FMLPaths.CONFIGDIR.get().toFile(), "ic2c/$path")
+    val files = cropJsons.listFiles() ?: return
+    for (cropJson in files) {
+        if (cropJson.isFile){
+            if (cropJson.absolutePath.endsWith(".json")){
+                var additionalError: String? = null;
+                try {
+                    val reader = Files.newBufferedReader(cropJson.toPath())
+                    val parsed = JsonParser.parseReader(reader).asJsonObject
+                    try {
+                        function.accept(parsed)
+                    } catch (e: Exception) {
+                        additionalError = parsed.toString()
+                        throw e
+                    }
+                } catch (e: Exception){
+                    if (additionalError != null) {
+                        LOGGER.error(additionalError)
+                    }
+                    LOGGER.error("Crop Json not Valid!", e)
+                }
+            }
+        }
+    }
+}

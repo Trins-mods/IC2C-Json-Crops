@@ -1,0 +1,45 @@
+{
+  "id": "examplemod:example",
+  "name": "ic2.crop.example", //Translation key for crop
+  "discoveredBy": "Example",
+  "displayItem": "minecraft:diamond", // can be either a string or an object
+  "properties": { //all these fields are required
+    "tier": 1,
+    "chemistry": 2,
+    "consumable": 3,
+    "defensive": 3,
+    "colorful": 4,
+    "weed": 5
+  },
+  "attributes": [
+    "Yellow",
+    "Light"
+  ],
+  "textures": [ //must be as many textures as there are growth stages, as defined in growthSteps
+    "ic2:block/crops/reed/growing_0",
+    "ic2:block/crops/reed/growing_1",
+    "ic2:block/crops/reed/growing_reed_2"
+  ],
+  "growthSteps": 3,
+  "drops": [
+    {
+      "item": "minecraft:diamond",
+      "count": 1
+    }
+  ],
+  //optional
+  "cropType" : "AIR",
+  "optimalHarvestStep": 3, //if omitted defaults to growthSteps
+  "growthDuration": [ //if omitted or left empty, defaults to tier in properties object * 200
+    200,
+    400,
+    600
+  ],
+  "droppingSeeds": true, //whether this crop can drop seeds if seed mode is enabled
+  "seedDrops": [
+    {
+      "item": "minecraft:dirt",
+      "count": 1
+    }
+  ]
+}

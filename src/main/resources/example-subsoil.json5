@@ -1,0 +1,7 @@
+{
+  "humidity" : 10, //how much humidity this subsoil adds to the current environment, can be positive or negative
+  "nutrients" : 10, //how many nutrients this subsoil adds to the current environment, can be positive or negative
+  "blocks": [ //List of blocks to register this subsoil to. can be used to override existing subsoils.
+    "minecraft:diamond_block"
+  ]
+}

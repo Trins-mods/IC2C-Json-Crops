@@ -16,7 +16,7 @@ import net.minecraftforge.api.distmarker.OnlyIn
 
 class JsonCrop(private val data: JsonCropData) : BaseCrop(data.id, data.properties, *data.attributes.toTypedArray()), ISeedCrop {
     override fun getName(): Component {
-       return this.translate("crop.ic2." + data.name);
+       return this.translate(data.name)
     }
 
     override fun discoveredBy(): Component {
@@ -38,7 +38,7 @@ class JsonCrop(private val data: JsonCropData) : BaseCrop(data.id, data.properti
 
     @OnlyIn(Dist.CLIENT)
     override fun getTexture(stage: Int): TextureAtlasSprite? {
-        return null;
+        return null
     }
 
     override fun getGrowthSteps(): Int {

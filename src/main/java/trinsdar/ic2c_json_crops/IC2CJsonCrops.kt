@@ -12,11 +12,13 @@ import net.minecraftforge.common.crafting.CraftingHelper
 import net.minecraftforge.eventbus.api.EventPriority
 import net.minecraftforge.eventbus.api.SubscribeEvent
 import net.minecraftforge.fml.common.Mod
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent
 import net.minecraftforge.registries.ForgeRegistries
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import thedarkcolour.kotlinforforge.forge.DIST
 import thedarkcolour.kotlinforforge.forge.FORGE_BUS
+import thedarkcolour.kotlinforforge.forge.MOD_BUS
 
 @Mod(IC2CJsonCrops.ID)
 object IC2CJsonCrops {
@@ -26,12 +28,11 @@ object IC2CJsonCrops {
     val LOGGER: Logger = LogManager.getLogger(ID)
 
     init {
-        FORGE_BUS.register(this)
-        FORGE_BUS.start()
+        MOD_BUS.register(this)
     }
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
-    fun onCropRegister(event: ICropRegistry.CropRegisterEvent){
+    fun onCropRegister(event: FMLCommonSetupEvent) {
         if (DIST.isClient){
             writeExampleConfig("crops", "example-crop.json5")
             writeExampleConfig("farmland", "example-farmland.json5")

@@ -26,3 +26,9 @@ Utility mod for maing ic2c crops using json.
     versionRange="[1.19.2,1.19.3)"
     ordering="NONE"
     side="BOTH"
+[[dependencies.ic2c_json_crops]]
+    modId="ic2"
+    mandatory=true
+    versionRange="[1.19.2-2.1,)"
+    ordering = "AFTER"
+    side = "BOTH"

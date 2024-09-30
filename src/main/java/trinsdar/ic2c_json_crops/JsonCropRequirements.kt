@@ -4,4 +4,4 @@ import net.minecraft.world.level.block.Block
 import java.util.function.Predicate
 
 @JvmRecord
-data class JsonCropRequirements(val growth: Int, val minLightLevel: Int, val maxLightLevel: Int, val minHumidity: Int, val maxHumidity: Int, val blockBelow: Predicate<Block>?)
+data class JsonCropRequirements(val growth: Int, val minLightLevel: Int, val maxLightLevel: Int, val minHumidity: Int, val maxHumidity: Int, val blocksBelow: Predicate<Block>?)

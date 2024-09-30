@@ -107,21 +107,33 @@ fun cropFromJsonObject(jsonObject: JsonObject) : JsonCropData {
                 val maxLightLevel = if (element.has("maxLightLevel")) element.get("maxLightLevel").asInt else 15
                 val minHumidity = if (element.has("minHumidity")) element.get("minHumidity").asInt else -1
                 val maxHumidity = if (element.has("maxHumidity")) element.get("maxHumidity").asInt else -1
-                val blockBelow = if (element.has("blockBelow")){
-                    val blockName = element.get("blockBelow").asString
-                    val isTag = blockName.startsWith("#")
-                    val pred : (Block) -> Boolean = if (isTag) {
-                        val tag = BlockTags.create(ResourceLocation(blockName))
-                        val test = { b : Block ->
-                            b.defaultBlockState().`is`(tag)
+                val blockBelow = if (element.has("blocksBelow")){
+                    val blocksBelow = element.getAsJsonArray("blocksBelow")
+                    val blockList = ArrayList<(Block) -> Boolean>()
+                    for (e in blocksBelow) {
+                        val blockName = e.asString
+                        val isTag = blockName.startsWith("#")
+                        val pred : (Block) -> Boolean = if (isTag) {
+                            val tag = BlockTags.create(ResourceLocation(blockName))
+                            val test = { b : Block ->
+                                b.defaultBlockState().`is`(tag)
+                            }
+                            test
+                        } else {
+                            val block = ForgeRegistries.BLOCKS.getValue(ResourceLocation(blockName))?: throw IllegalArgumentException("Block $blockName does not exist")
+                            val test = {b : Block ->
+                                b.defaultBlockState().`is`(block)
+                            }
+                            test
                         }
-                        test
-                    } else {
-                        val block = ForgeRegistries.BLOCKS.getValue(ResourceLocation(blockName))?: throw IllegalArgumentException("Block $blockName does not exist")
-                        val test = {b : Block ->
-                            b.defaultBlockState().`is`(block)
+                        blockList.add(pred)
+                    }
+                    val pred : (Block) -> Boolean = {b ->
+                        var foundBlock = blockList.isEmpty()
+                        for (p in blockList){
+                            if (p.invoke(b)) foundBlock = true
                         }
-                        test
+                        foundBlock
                     }
                     pred
                 } else null

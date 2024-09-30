@@ -8,11 +8,9 @@ import ic2.core.block.crops.crops.BaseCrop
 import net.minecraft.client.renderer.texture.TextureAtlasSprite
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
-import net.minecraft.tags.TagKey
 import net.minecraft.world.InteractionHand
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.ItemStack
-import net.minecraft.world.level.block.Block
 import net.minecraftforge.api.distmarker.Dist
 import net.minecraftforge.api.distmarker.OnlyIn
 
@@ -80,10 +78,10 @@ class JsonCrop(private val data: JsonCropData) : BaseCrop(data.id, data.properti
         if (growthRequirement.maxHumidity > 0){
             grow = grow && cropTile.humidity <= growthRequirement.maxHumidity
         }
-        if (growthRequirement.blockBelow != null){
+        if (growthRequirement.blocksBelow != null){
             var foundBLock = false
             for (block in cropTile.blocksBelow){
-                if (growthRequirement.blockBelow.test(block)){
+                if (growthRequirement.blocksBelow.test(block)){
                     foundBLock = true
                 }
             }

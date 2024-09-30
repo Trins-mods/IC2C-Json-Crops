@@ -8,9 +8,11 @@ import ic2.core.block.crops.crops.BaseCrop
 import net.minecraft.client.renderer.texture.TextureAtlasSprite
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
+import net.minecraft.tags.TagKey
 import net.minecraft.world.InteractionHand
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.ItemStack
+import net.minecraft.world.level.block.Block
 import net.minecraftforge.api.distmarker.Dist
 import net.minecraftforge.api.distmarker.OnlyIn
 
@@ -59,6 +61,38 @@ class JsonCrop(private val data: JsonCropData) : BaseCrop(data.id, data.properti
 
     override fun getGrowthDuration(cropTile: ICropTile): Int {
         val stage = cropTile.growthStage
+        return getGrowthRequirement(stage).growth
+    }
+
+    override fun canGrow(cropTile: ICropTile): Boolean {
+        var grow = super.canGrow(cropTile)
+        val stage = cropTile.growthStage
+        val growthRequirement = getGrowthRequirement(stage)
+        if (growthRequirement.minLightLevel > 0){
+            grow = grow && cropTile.lightLevel >= growthRequirement.minLightLevel
+        }
+        if (growthRequirement.maxLightLevel < 15){
+            grow = grow && cropTile.lightLevel <= growthRequirement.maxLightLevel
+        }
+        if (growthRequirement.minHumidity > 0){
+            grow = grow && cropTile.humidity >= growthRequirement.minHumidity
+        }
+        if (growthRequirement.maxHumidity > 0){
+            grow = grow && cropTile.humidity <= growthRequirement.maxHumidity
+        }
+        if (growthRequirement.blockBelow != null){
+            var foundBLock = false
+            for (block in cropTile.blocksBelow){
+                if (growthRequirement.blockBelow.test(block)){
+                    foundBLock = true
+                }
+            }
+            grow = grow && foundBLock
+        }
+        return grow
+    }
+
+    fun getGrowthRequirement(stage : Int) : JsonCropRequirements {
         val offset = stage - 1
         if (data.growthDuration.size <= offset) return data.growthDuration.last()
         return data.growthDuration[offset]

@@ -1,6 +1,7 @@
 @file:JvmName("CropUtils")
 package trinsdar.ic2c_json_crops
 
+import com.google.common.base.Predicate
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import ic2.api.crops.BaseSeed
@@ -8,9 +9,12 @@ import ic2.api.crops.CropProperties
 import ic2.api.crops.ICrop
 import ic2.core.block.crops.CropRegistry
 import net.minecraft.resources.ResourceLocation
+import net.minecraft.tags.BlockTags
 import net.minecraft.world.item.ItemStack
+import net.minecraft.world.level.block.Block
 import net.minecraftforge.common.crafting.CraftingHelper
 import net.minecraftforge.fml.loading.FMLPaths
+import net.minecraftforge.registries.ForgeRegistries
 import trinsdar.ic2c_json_crops.IC2CJsonCrops.LOGGER
 import java.io.File
 import java.io.FileOutputStream
@@ -93,16 +97,43 @@ fun cropFromJsonObject(jsonObject: JsonObject) : JsonCropData {
     } else ICrop.CropType.AIR
     val optionalHarvestStep = if (jsonObject.has("harvestStep")) jsonObject.get("harvestStep").asInt else growthSteps
     val growthDuration = if (jsonObject.has("growthDuration")) {
-        val list = ArrayList<Int>()
+        val list = ArrayList<JsonCropRequirements>()
         array = jsonObject.getAsJsonArray("growthDuration")
-        if (array.isEmpty) list.add(properties.tier * 200)
+        if (array.isEmpty) list.add(JsonCropRequirements(properties.tier * 200, 0, 15, -1, -1, null))
         for (element in array){
-            list.add(element.asInt)
+            if (element is JsonObject){
+                val growth = if (element.has("growth")) element.get("growth").asInt else properties.tier * 200
+                val minLightLevel = if (element.has("minLightLevel")) element.get("minLightLevel").asInt else 0
+                val maxLightLevel = if (element.has("maxLightLevel")) element.get("maxLightLevel").asInt else 15
+                val minHumidity = if (element.has("minHumidity")) element.get("minHumidity").asInt else -1
+                val maxHumidity = if (element.has("maxHumidity")) element.get("maxHumidity").asInt else -1
+                val blockBelow = if (element.has("blockBelow")){
+                    val blockName = element.get("blockBelow").asString
+                    val isTag = blockName.startsWith("#")
+                    val pred : (Block) -> Boolean = if (isTag) {
+                        val tag = BlockTags.create(ResourceLocation(blockName))
+                        val test = { b : Block ->
+                            b.defaultBlockState().`is`(tag)
+                        }
+                        test
+                    } else {
+                        val block = ForgeRegistries.BLOCKS.getValue(ResourceLocation(blockName))?: throw IllegalArgumentException("Block $blockName does not exist")
+                        val test = {b : Block ->
+                            b.defaultBlockState().`is`(block)
+                        }
+                        test
+                    }
+                    pred
+                } else null
+                JsonCropRequirements(growth, minLightLevel, maxLightLevel, minHumidity, maxHumidity, blockBelow)
+            } else {
+                list.add(JsonCropRequirements(element.asInt, 0, 15, -1, -1, null))
+            }
         }
         list
     } else {
-        val list = ArrayList<Int>()
-        list.add(properties.tier * 200)
+        val list = ArrayList<JsonCropRequirements>()
+        list.add(JsonCropRequirements(properties.tier * 200, 0, 15, -1, -1, null))
         list
     }
     val droppingSeeds = jsonObject.has("droppingSeeds") || jsonObject.getAsJsonObject("droppingSeeds").asBoolean

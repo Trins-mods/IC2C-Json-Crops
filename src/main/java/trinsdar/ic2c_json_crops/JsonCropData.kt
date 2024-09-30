@@ -13,7 +13,7 @@ data class JsonCropData(val id: ResourceLocation, val name: String,
                         val properties: CropProperties, val attributes: List<String>,
                         val textures: List<String>, val growthSteps: Int,
                         val drops: List<ItemStack>, val cropType: ICrop.CropType,
-                        val optimalHarvestStep: Int, val growthDuration: List<Int>,
+                        val optimalHarvestStep: Int, val growthDuration: List<JsonCropRequirements>,
                         val droppingSeeds: Boolean, val seedDrops: List<ItemStack>
     ){
 }

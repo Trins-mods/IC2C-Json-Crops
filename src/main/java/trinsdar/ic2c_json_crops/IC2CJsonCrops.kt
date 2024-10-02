@@ -72,7 +72,7 @@ object IC2CJsonCrops {
                 val soil = BaseSubSoil(j.get("humidity").asInt, j.get("nutrients").asInt)
                 CropRegistry.REGISTRY.registerSubSoil(soil, *blocks.toTypedArray())
             } else {
-                val farmland = BaseFarmland(j.get("humidity").asInt, j.get("nutrients").asInt)
+                val farmland = JsonFarmland(j.get("humidity").asInt, j.get("nutrients").asInt, j.has("canHydrate") && j.get("canHydrate").asBoolean)
                 CropRegistry.REGISTRY.registerFarmland(farmland, *blocks.toTypedArray())
             }
         }

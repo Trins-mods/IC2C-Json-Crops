@@ -1,6 +1,7 @@
 {
-  "humidity" : 10, //how much humidity this farmland adds to the current environment, can be positive or negative
-  "nutrients" : 10, //how many nutrients this farmland adds to the current environment, can be positive or negative
+  //For balance reasons, the sum of humidity and nutrients should not exceed +3, unless special or very rare
+  "humidity" : 2, //how much humidity this farmland adds to the current environment, can be positive or negative
+  "nutrients" : 1, //how many nutrients this farmland adds to the current environment, can be positive or negative
   /*   List of blocks to register this farmland to. can be used to override existing farmlands.
   Note: not recommended to override vanilla farmland with this, as vanilla farmland can
   have different humidity depending on whether it is wet or dry.

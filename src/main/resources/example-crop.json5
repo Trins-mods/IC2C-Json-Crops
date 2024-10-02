@@ -28,7 +28,7 @@
     }
   ],
   //optional
-  "cropType" : "AIR",
+  "cropType" : "AIR", //valid options are AIR, WATER, BOTH
   "optimalHarvestStep": 3, //if omitted defaults to growthSteps
   "growthDuration": [ //if omitted or left empty, defaults to tier in properties object * 200
     200,

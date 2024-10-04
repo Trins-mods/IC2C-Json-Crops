@@ -35,7 +35,7 @@ object IC2CJsonCrops {
     fun onCropRegister(event: FMLCommonSetupEvent) {
         if (DIST.isClient){
             writeExampleConfig("crops", "example-crop.json5")
-            writeExampleConfig("farmland", "example-farmland.json5")
+            writeExampleConfig("farmlands", "example-farmland.json5")
             writeExampleConfig("seeds", "example-seed.json5")
             writeExampleConfig("subsoils", "example-subsoil.json5")
         }

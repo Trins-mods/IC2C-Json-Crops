@@ -92,8 +92,8 @@ class JsonCrop(private val data: JsonCropData) : BaseCrop(data.id, data.properti
 
     fun getGrowthRequirement(stage : Int) : JsonCropRequirements {
         val offset = stage - 1
-        if (data.growthDuration.size <= offset) return data.growthDuration.last()
-        return data.growthDuration[offset]
+        if (data.stages.size <= offset) return data.stages.last()
+        return data.stages[offset]
     }
 
     override fun onRightClick(cropTile: ICropTile, player: Player?, hand: InteractionHand?): Boolean {

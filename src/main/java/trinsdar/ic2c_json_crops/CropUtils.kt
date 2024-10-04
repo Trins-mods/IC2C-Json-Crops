@@ -1,7 +1,6 @@
 @file:JvmName("CropUtils")
 package trinsdar.ic2c_json_crops
 
-import com.google.common.base.Predicate
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import ic2.api.crops.BaseSeed
@@ -96,9 +95,9 @@ fun cropFromJsonObject(jsonObject: JsonObject) : JsonCropData {
         ICrop.CropType.valueOf(jsonObject.get("cropType").asString)
     } else ICrop.CropType.AIR
     val optionalHarvestStep = if (jsonObject.has("harvestStep")) jsonObject.get("harvestStep").asInt else growthSteps
-    val growthDuration = if (jsonObject.has("growthDuration")) {
+    val stages = if (jsonObject.has("stages")) {
         val list = ArrayList<JsonCropRequirements>()
-        array = jsonObject.getAsJsonArray("growthDuration")
+        array = jsonObject.getAsJsonArray("stages")
         if (array.isEmpty) list.add(JsonCropRequirements(properties.tier * 200, 0, 15, -1, -1, null))
         for (element in array){
             if (element is JsonObject){
@@ -139,7 +138,7 @@ fun cropFromJsonObject(jsonObject: JsonObject) : JsonCropData {
                 } else null
                 JsonCropRequirements(growth, minLightLevel, maxLightLevel, minHumidity, maxHumidity, blockBelow)
             } else {
-                list.add(JsonCropRequirements(element.asInt, 0, 15, -1, -1, null))
+                list.add(JsonCropRequirements(properties.tier * 200, 0, 15, -1, -1, null))
             }
         }
         list
@@ -160,7 +159,7 @@ fun cropFromJsonObject(jsonObject: JsonObject) : JsonCropData {
             }
         }
     }
-    return JsonCropData(id, name, discoveredBy, displayItem, properties, attributes, textures, growthSteps, drops, cropType, optionalHarvestStep, growthDuration, droppingSeeds, seedDrops)
+    return JsonCropData(id, name, discoveredBy, displayItem, properties, attributes, textures, growthSteps, drops, cropType, optionalHarvestStep, stages, droppingSeeds, seedDrops)
 }
 
 fun seedFromJsonObject(jsonObject: JsonObject): BaseSeed {
